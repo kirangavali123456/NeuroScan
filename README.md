@@ -1,42 +1,49 @@
-# 🩻 NeuroScan: Generative Medical Anomaly Detection
+# 🩻 NeuroScan Pro: Multi-Model Anomaly Detection
 
-> **Unsupervised Anomaly Detection for Chest X-Rays using Variational Autoencoders (VAE).**
+> **Advanced Unsupervised Anomaly Detection for Medical Imaging using VAEs, GANs, and Vision Transformers.**
 
-NeuroScan is a deep learning application designed to assist in medical diagnostics. It uses a **Convolutional Variational Autoencoder (ConvVAE)** to learn the anatomical structure of *healthy* lungs. When presented with a pathological scan (e.g., Pneumonia), the model fails to reconstruct the anomaly, highlighting the diseased area in a heat map.
+NeuroScan Pro is a state-of-the-art benchmarking workbench for medical AI. It uses **One-Class Classification** to detect pathologies (like Pneumonia) by training strictly on healthy tissue.
+
+Unlike standard classifiers, NeuroScan Pro learns the "manifold of health." When presented with disease, the models fail to reconstruct the anatomy correctly, creating a "Difference Map" that highlights the tumor or infection.
 
 ---
 
-## 🌟 Key Features
+## 🌟 New Pro Features
 
-* **Generative AI Core:** Custom PyTorch ConvVAE architecture trained on high-resolution medical images (128x128).
-* **One-Class Classification:** Trains *only* on normal data, making it capable of detecting *any* anomaly (Pneumonia, Tuberculosis, etc.) without needing labeled diseased samples.
-* **Visual Diagnostics:** Generates real-time "Anomaly Heatmaps" (Difference Maps) to pinpoint suspicious areas.
-* **Model Management:**
-    * **Auto-Save:** Automatically snapshots trained models with epoch/timestamp metadata.
-    * **Model Loader:** Dropdown menu to load and reuse previous models instantly.
-    * **Cross-Platform:** Models trained on GPU can be loaded on CPU for inference.
-* **User-Friendly UI:** Built with **Streamlit** and includes a native **Folder Browser** to easily select datasets.
+* **Three Architectures:**
+    * **ConvVAE (Variational Autoencoder):** The classic probabilistic baseline.
+    * **GAN (Generative Adversarial Network):** Uses adversarial training to generate sharper, more realistic healthy tissue reconstructions.
+    * **ViT (Vision Transformer):** Uses Self-Attention mechanisms to capture long-range dependencies in anatomical structures.
+* **⚔️ Benchmark Suite:**
+    * **Visual Comparison:** See how VAE, GAN, and ViT reconstruct the same X-Ray side-by-side.
+    * **Anomaly Localization:** Compare "Difference Maps" to see which model best highlights the disease.
+    * **Metric Table:** Auto-calculates **Accuracy** and **F1-Score** for all loaded models on the Test set.
+* **Persistent History:** Training loss graphs are saved in memory, allowing you to train Model A, then Model B, and compare their learning curves on the same plot.
+* **Auto-Save & Load:** Models are automatically timestamped and saved. The "Diagnostics" tab lets you mix and match versions (e.g., "Load VAE from yesterday vs. GAN from today").
 
 ---
 
 ## 🛠️ Technical Stack
 
-* **Deep Learning:** PyTorch, TorchVision
-* **Interface:** Streamlit, Tkinter (for native file dialogs)
-* **Data Processing:** NumPy, PIL
-* **Visualization:** Matplotlib, Seaborn
+* **Core:** PyTorch, TorchVision
+* **UI:** Streamlit
+* **Algorithms:**
+    * **VAE:** Standard Encoder-Decoder with KL Divergence loss.
+    * **GAN:** Autoencoder-style Generator with a PatchGAN Discriminator.
+    * **Transformer:** Patch-based ViT Encoder with a linear projection Decoder.
+* **Metrics:** Scikit-Learn (Accuracy, F1).
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Installation
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/NeuroScan.git](https://github.com/yourusername/NeuroScan.git)
-cd NeuroScan
+git clone [https://github.com/yourusername/NeuroScanPro.git](https://github.com/yourusername/NeuroScanPro.git)
+cd NeuroScanPro
 ```
 
-### 2. Create Virtual Environment (Recommended)
+### 2. Set up Environment
 ```bash
 python -m venv venv
 # Windows
@@ -49,83 +56,71 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-*(Note: Ensure you have `tkinter` installed. It usually comes with Python, but on Linux you might need `sudo apt-get install python3-tk`)*
 
 ---
 
 ## 📂 Dataset Setup
 
-This project is designed to work with the **Chest X-Ray Images (Pneumonia)** dataset.
+**Required:** [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/datasets/paultimothythomas/chest-xray-pneumonia) from Kaggle.
 
-1.  **Download Data:** [Kaggle Link](https://www.kaggle.com/datasets/paultimothythomas/chest-xray-pneumonia)
-2.  **Extract:** Unzip the folder. You should have a structure like this:
+1.  Download and Unzip.
+2.  Ensure folder structure:
     ```text
     chest_xray/
     ├── train/
-    │   ├── NORMAL/
-    │   └── PNEUMONIA/
-    └── test/ ...
+    │   ├── NORMAL/     <-- Training Data (Healthy)
+    │   └── PNEUMONIA/  <-- Ignored during training
+    └── test/           <-- Used for Benchmarking (Contains Both)
     ```
-3.  **Note Path:** Remember where you saved this folder. You will select it in the app.
+3.  **Note Path:** You will select this folder using the "📂" button in the app.
 
 ---
 
 ## 🕹️ Usage Guide
 
-### 1. Launch the App
+### 1. Launch the Workbench
 ```bash
 streamlit run app.py
 ```
 
-### 2. Configure Data
-* On the sidebar, click the **📂 Button**.
-* Select your extracted `chest_xray` folder.
-* The app will automatically verify the path.
+### 2. Train Models (Tab 1)
+* **Select Architecture:** Choose VAE, GAN, Transformer, or "Train ALL Sequentially".
+* **Configure:** Set Epochs (Rec: 20+) and Learning Rate.
+* **Train:** Click Start.
+    * *The Loss Graph will update in real-time and persists across different training runs.*
+    * *Models are auto-saved to `saved_models/`.*
 
-### 3. Train a Model (Tab 1)
-* Go to the **"🚀 Train New Model"** tab.
-* Set **Epochs** (Recommended: 20-50 for best results).
-* Click **Start Training**.
-* *The app will visualize the loss curve in real-time and auto-save the model upon completion.*
-
-### 4. Run Diagnostics (Tab 2)
-* Go to the **"🔎 Diagnostics & Loading"** tab.
-* Select a saved model from the dropdown (or use the one you just trained).
-* **Control Group Test:** Click "Scan Random Normal Lung". The heatmap should be mostly black (low error).
-* **Test Group Test:** Click "Scan Random Pneumonia Lung". The heatmap will glow brightly over the infected areas, showing where the model detected anomalies.
+### 3. Run Diagnostics & Benchmark (Tab 2)
+* **Load Models:** Use the dropdowns to select specific `.pt` files for VAE, GAN, and ViT. (Select "None" if you only want to test one).
+* **Click "RUN BENCHMARK":**
+    * **Visuals:** Shows the Input X-Ray, Reconstructions, and **Difference Maps** (Heatmaps) for all loaded models.
+    * **Metrics:** Displays a table with **Accuracy** and **F1 Score** to numerically prove which architecture performs best.
 
 ---
 
-## 🧠 Model Architecture
+## 🧠 Model Architectures
 
-The `MedicalVAE` uses a deep convolutional network:
-
-* **Input:** 128x128 Grayscale Image.
-* **Encoder:** 4 Layers of `Conv2d` + `BatchNorm` + `LeakyReLU`. Compresses image to a dense latent vector.
-* **Latent Space:** Uses the Reparameterization Trick ($z = \mu + \sigma \cdot \epsilon$) to enable generative sampling.
-* **Decoder:** 4 Layers of `ConvTranspose2d` to upscale the latent vector back to 128x128.
-* **Loss Function:** $MSE + \beta \cdot KLD$ (Reconstruction Loss + KL Divergence).
+| Model | Mechanism | Strengths | Weaknesses |
+| :--- | :--- | :--- | :--- |
+| **VAE** | Compresses input to Gaussian latent space. | Smooth, stable training. | Blurry reconstructions. |
+| **GAN** | Generator fights Discriminator. | Sharp, realistic details. | Unstable training (Mode Collapse). |
+| **ViT** | Splits image into 16x16 patches + Self-Attention. | Understands global structure. | Data hungry; heavy compute. |
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-NeuroScan/
-├── saved_models/       # Auto-created folder for .pt files
-├── app.py              # Main Streamlit Application
-├── model.py            # PyTorch Model Architecture
-├── utils.py            # Visualization & Heatmap logic
-├── requirements.txt    # Python dependencies
-└── README.md           # Project Documentation
+NeuroScanPro/
+├── saved_models/       # Auto-created folder for trained weights
+├── app.py              # Main Benchmark Dashboard
+├── model.py            # PyTorch Architectures (VAE, GAN, ViT)
+├── utils.py            # Metrics, Heatmaps & Plotting Logic
+├── requirements.txt    # Dependencies
+└── README.md           # Documentation
 ```
 
 ---
 
-## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
 
----
-
-*Built for the purpose of demonstrating Generative AI in Healthcare.*
