@@ -121,6 +121,10 @@ NeuroScanPro/
 ```
 
 ---
-
+## Images
+<img width="1286" height="614" alt="neuroscan train models" src="https://github.com/user-attachments/assets/802c6338-368c-45ca-963a-3e766a14dbe8" />
+<img width="1288" height="356" alt="diagnostic and benchmark" src="https://github.com/user-attachments/assets/971569a5-e788-4be1-8a50-a2b4de93e60a" />
+<img width="1001" height="545" alt="visual reconstruction" src="https://github.com/user-attachments/assets/939512f6-5e38-4492-a668-fc2d586738a1" />
+<img width="1002" height="193" alt="accuracy and f1 score" src="https://github.com/user-attachments/assets/8c59f6a8-86bf-4eb2-beb8-d5880c5d114c" />
 
 
